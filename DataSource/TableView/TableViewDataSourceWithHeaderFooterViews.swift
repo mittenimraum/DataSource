@@ -25,15 +25,15 @@ import UIKit
 open class TableViewDataSourceWithHeaderFooterViews: TableViewDataSource, UITableViewDelegate {
 
 	public final var reuseIdentifierForHeaderItem: (Int, Any) -> String = {
-		_, _ in "DefaultHeaderView"
+        _,_  in "DefaultHeaderView"
 	}
 	public final var reuseIdentifierForFooterItem: (Int, Any) -> String = {
-		_, _ in "DefaultFooterView"
+        _,_  in "DefaultFooterView"
 	}
 
 	open func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard let item = self.dataSource.supplementaryItemOfKind(UICollectionView.elementKindSectionHeader, inSection: section) else {
-			return nil
+			fatalError("Expected item for table view header in section \(section), but found nil")
 		}
 		let reuseIdentifier = self.reuseIdentifierForHeaderItem(section, item)
 		let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: reuseIdentifier)!
@@ -43,7 +43,7 @@ open class TableViewDataSourceWithHeaderFooterViews: TableViewDataSource, UITabl
 
 	open func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         guard let item = self.dataSource.supplementaryItemOfKind(UICollectionView.elementKindSectionFooter, inSection: section) else {
-			return nil
+			fatalError("Expected item for table view footer in section \(section), but found nil")
 		}
 		let reuseIdentifier = self.reuseIdentifierForFooterItem(section, item)
 		let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: reuseIdentifier)!

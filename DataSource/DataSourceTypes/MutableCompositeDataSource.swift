@@ -75,14 +75,8 @@ public final class MutableCompositeDataSource: DataSource {
 	/// Inserts a given inner dataSource at a given index
 	/// and emits `DataChangeInsertSections` for its sections.
 	public func insert(_ dataSource: DataSource, at index: Int) {
-		self.insert([dataSource], at: index)
-	}
-
-	/// Inserts an array of dataSources at a given index
-	/// and emits `DataChangeInsertSections` for their sections.
-	public func insert(_ dataSources: [DataSource], at index: Int) {
-		self._innerDataSources.value.insert(contentsOf: dataSources, at: index)
-		let sections = dataSources.enumerated().flatMap { self.sections(of: $1, at: index + $0) }
+		let sections = self.sections(of: dataSource, at: index)
+		self._innerDataSources.value.insert(dataSource, at: index)
 		if sections.count > 0 {
 			let change = DataChangeInsertSections(sections)
 			self.observer.send(value: change)
@@ -92,14 +86,8 @@ public final class MutableCompositeDataSource: DataSource {
 	/// Deletes an inner dataSource at a given index
 	/// and emits `DataChangeDeleteSections` for its sections.
 	public func delete(at index: Int) {
-		self.delete(in: Range(index...index))
-	}
-
-	/// Deletes an inner dataSource in the given range
-	/// and emits `DataChangeDeleteSections` for its corresponding sections.
-	public func delete(in range: Range<Int>) {
-		let sections = CountableRange(range).flatMap(self.sectionsOfDataSource)
-		self._innerDataSources.value.removeSubrange(range)
+		let sections = self.sectionsOfDataSource(at: index)
+		self._innerDataSources.value.remove(at: index)
 		if sections.count > 0 {
 			let change = DataChangeDeleteSections(sections)
 			self.observer.send(value: change)

@@ -35,14 +35,12 @@ open class CollectionViewDataSource: NSObject, UICollectionViewDataSource {
 	public final let dataSource = ProxyDataSource()
 
 	public final var reuseIdentifierForItem: (IndexPath, Any) -> String = {
-		_, _ in "DefaultCell"
+        _,_  in "DefaultCell"
 	}
 
 	public final var reuseIdentifierForSupplementaryItem: (String, Int, Any) -> String = {
-		_, _, _ in "DefaultSupplementaryView"
+        _,_,_  in "DefaultSupplementaryView"
 	}
-	
-	public final var dataChangeTarget: DataChangeTarget? = nil
 
 	fileprivate let disposable = CompositeDisposable()
 
@@ -50,8 +48,8 @@ open class CollectionViewDataSource: NSObject, UICollectionViewDataSource {
 		super.init()
 		self.disposable += self.dataSource.changes.observeValues {
 			[weak self] change in
-			if let this = self, let dataChangeTarget = this.dataChangeTarget ?? this.collectionView {
-				change.apply(to: dataChangeTarget)
+			if let collectionView = self?.collectionView {
+				change.apply(to: collectionView)
 			}
 		}
 	}
